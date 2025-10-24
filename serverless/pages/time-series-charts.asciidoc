@@ -1,0 +1,75 @@
+[[time-series-charts]]
+= Time series charts
+
+// :description: Best practices for building time-based visualizations in Elastic.
+// :keywords: serverless, elasticsearch, visualization, time series, charts, lens, dashboard
+
+This content applies to: {es-badge} {obs-badge} {sec-badge}
+
+Time series charts show how a value changes over time. Use them to monitor trends, seasonal patterns, and anomalies across timestamps.
+
+[discrete]
+== Choose the right chart
+
+- Line charts: Great for continuous metrics (rates, averages). Emphasize trends and comparisons.
+- Area charts: Like line charts but highlight magnitude. Use stacked area to show parts of a whole over time.
+- Bar charts: Good for discrete intervals or counts per bucket (for example, daily totals). Avoid too-small intervals that create a barcode effect.
+- Heat maps: Useful for dense series or periodic patterns (for example, hour-by-day).
+- Sparklines: For compact overviews.
+
+[discrete]
+== Build a time series quickly
+
+. Create or pick a {data-source} with a timestamp field (see <<data-views>>).
+. Open **Dashboards** or **Visualize Library** and create a visualization.
+. In Lens:
+.. Set the horizontal axis to `Date histogram` on your time field.
+.. Add a metric on the vertical axis (for example, `Average`, `Sum`, `Max`, `Unique count`).
+.. Optional: Split series by a categorical field (for example, `service.name`).
+.. Optional: Add a reference line for thresholds or service level objectives.
+. Save to the **Visualize Library** and add to a dashboard.
+
+[discrete]
+== Best practices
+
+- Time interval:
+  * Prefer `Auto` for adaptive bucketing. For fixed comparisons, pick a calendar-aware interval (for example, 1d, 1w, 1M) to avoid DST drift.
+  * Avoid buckets that produce more than about 10,000 points; aggregate to coarser intervals for readability and performance.
+- Missing data:
+  * Decide whether gaps should be displayed as breaks (null) or zeros. Use "Show values in empty buckets" cautiously.
+  * Consider `Moving average` to smooth noisy series; combine with `Derivative` for rates of change.
+- Scales and axes:
+  * Use linear scale for most metrics; use log scale for wide dynamic ranges.
+  * Limit to 2–5 concurrent series per chart; move extras into small multiples.
+- Stacking:
+  * Use stacked area/bars to show composition; use "normalize to 100%" to compare proportions.
+  * Use overlapping lines (non-stacked) when comparing absolute values.
+- Time zone and locale:
+  * Align the visualization time zone with your audience. The display time zone can differ from the ingest time zone.
+  * Be aware of DST; calendar intervals adjust automatically.
+- Large ranges and high-cardinality:
+  * Aggregate on fewer series or filter to top N; avoid plotting thousands of series.
+  * Consider downsampling or transforms for long time spans.
+
+[discrete]
+== Useful time series functions
+
+- Date histogram; percentile/median; percentile ranks
+- Derivative; cumulative sum; moving average; moving function
+- Windowed calculations for rolling KPIs
+- Annotations to mark deployments or incidents; reuse with <<visualize-library-annotation-groups,annotation groups>>
+
+[discrete]
+== Troubleshooting
+
+- Flat line at zero: Check the metric and field type; buckets may be empty or coerced to zero.
+- Spiky chart: Increase interval or smooth with moving average; verify event duplication.
+- Misaligned comparisons: Use the same bucket interval and time zone; choose calendar intervals for week/month comparisons.
+- Missing recent data: Confirm the dashboard time picker, data view time field, and ingest timestamps.
+
+[discrete]
+== Learn more
+
+- https://eui.elastic.co/docs/dataviz/types/time-series/[EUI dataviz guidelines: Time series charts]
+- {kibana-ref}/lens.html[Create visualizations with Lens]
+- {kibana-ref}/dashboard.html[Build dashboards]

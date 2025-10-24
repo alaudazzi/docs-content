@@ -39,6 +39,8 @@ include::./pages/search-your-data-semantic-search.asciidoc[leveloffset=+3]
 
 include::./pages/explore-your-data.asciidoc[leveloffset=+2]
 
+include::./pages/time-series-charts.asciidoc[leveloffset=+2]
+
 include::./pages/search-playground.asciidoc[leveloffset=+2]
 
 include::./pages/serverless-differences.asciidoc[leveloffset=+2]
